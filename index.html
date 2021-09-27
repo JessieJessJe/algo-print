@@ -4,24 +4,29 @@
     <body>
     <div id="left">
         <div class="form">
-          
-            <label>latitude:</label>
-            <input id="mylat" name="latDIY" type="text">
-          
+            <div>
+                <label>latitude:</label>
+                <input id="mylat" name="latDIY" type="text">
+            </div>
+
+            <div>
             <label>longitude:</label>
             <input id="mylng" name="lngDIY" type="text">
-          
-            <button id="mylatlng" onclick="setMyLocation()">Print</button>
+             </div>
+
+            <button id="mylatlng" onclick="setMyLocation()">Update</button>
         </div>
      
-      
+      <div style="border-bottom-style: solid; border-width: 1px; margin-bottom: 10px; padding-bottom: 10px;">
 
-        <div><p>Laurel Schwulst</p><p>New York, United States</p><button id="newyork" onclick="whichLocation(this.id)">Print</button></div>
-        <div><p>Yehwan Song</p><p>Seoul, Korea</p><button id="seoul" onclick="whichLocation(this.id)">Print</button></div>
-        <div><p>Braulio Amado</p><p>Lisbon, Portugal</p><button id="lisbon" onclick="whichLocation(this.id)">Print</button></div>
-        <div><p>Ronald Tau</p><p>Beijing, China</p><button id="beijing" onclick="whichLocation(this.id)">Print</button></div>
+        <div><p>Laurel Schwulst 📍New York, United States</p><button id="newyork" onclick="whichLocation(this.id)">Update</button></div>
+        <div><p>Yehwan Song 📍Seoul, Korea</p><button id="seoul" onclick="whichLocation(this.id)">Update</button></div>
+        <div><p>Braulio Amado📍Lisbon, Portugal</p><button id="lisbon" onclick="whichLocation(this.id)">Update</button></div>
+        <div><p>Ronald Tau 📍Beijing, China</p><button id="beijing" onclick="whichLocation(this.id)">Update</button></div>
 
-        <div> <button id="save" onclick="download()">Save</button></div>
+      </div>
+
+        <div> <button id="save" onclick="download()">Download</button></div>
     </div>
         <canvas id="canvas" width="594" height="841"></canvas>
         <script src="index.js"></script>
