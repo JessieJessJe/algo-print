@@ -1,0 +1,41 @@
+html {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    @font-face {
+        font-family: ZirkonThin;
+        src: url(assets/GT-Zirkon-Thin-Trial.otf);
+      }
+}
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin: 0;
+
+    font-family: ZirkonLight;
+
+}
+
+canvas {
+    /* width: 50% * (594/841); */
+    width: auto;
+    height: 80%;
+    padding: 10px;
+    display: block;
+    box-shadow: 0 2px 12px -2px rgba(0, 0, 0, .15)
+}
+
+#left{
+    font-size: 1rem;
+    display: flex;
+    justify-content: left;
+
+}

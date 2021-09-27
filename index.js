@@ -47,8 +47,8 @@ let myLoc = [{
 // const lat = math.mapRange(39.9,-180,180,-10,10);
 // const lng = math.mapRange(116.4,-180,180,-10,10);
 
-const mylat = map(40.7,-180,180,-10,10);
-const mylng = map(-74,-180,180,-10,10);
+let mylat = map(40.7,-180,180,-10,10),
+    mylng = map(-74,-180,180,-10,10);
 
 let lat=map(40.7,-180,180,-10,10), lng=map(-74,-180,180,-10,10), speaker='Laurel Schwulst', city='New York, United States';
 
@@ -103,6 +103,21 @@ const nameContext = nameCanvas.getContext('2d');
 document.getElementById('canvas').appendChild(typeCanvas); 
 document.getElementById('canvas').appendChild(nameCanvas); 
 
+//once customized location submitted
+function setMyLocation(){
+    let mylat0 = parseFloat(document.getElementById('mylat').value)
+    let mylng0 = parseFloat(document.getElementById('mylng').value)
+
+    mylat = map(mylat0,-180,180,-10,10);
+    mylng = map(mylng0,-180,180,-10,10);
+
+    context.clearRect(0, 0, width, height);
+
+    console.log('submit',mylat)
+    start()
+}
+
+//once chose another designer
 function whichLocation(id){
 
     myLoc.forEach((d)=>{
@@ -115,8 +130,6 @@ function whichLocation(id){
     })
 
     context.clearRect(0, 0, width, height);
-
-    console.log(speaker, 'clicked')
     start();
 
 }
@@ -450,37 +463,15 @@ async function start(){
 start();
 
 
+function download() {
+    const downloadUrl = canvas.toDataURL();
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.setAttribute("download", `Angles_EventPoster_${speaker}`);
+    a.click();
+  }
+
 // document.getElementById('seoul').onclick = whichLocation(this.id);
 // document.getElementById('beijing').onclick = whichLocation(this.id);
 // document.getElementById('newyork').onclick = whichLocation(this.id);
 // document.getElementById('lisbon').onclick = whichLocation(this.id);
-
-
-/*
-const url = 'https://picsum.photos/200';
-
-const loadMeSomeImage = (url) => {
-	return new Promise((resolve, reject) => {
-		const img = new Image();
-		img.onload = () => resolve(img);
-		img.onerror = () => reject();
-		img.src = url;
-	});
-};
-
-const start = async () => {
-	const img = await loadMeSomeImage(url);
-	console.log('image width', img.width);
-	console.log('this line');
-};
-
-// const start = () => {
-// 	loadMeSomeImage(url).then(img => {
-// 		console.log('image width', img.width);
-// 	});
-// 	console.log('this line');
-// };
-
-
-start();
-*/
