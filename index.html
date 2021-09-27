@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,shrink-to-fit=0,user-scalable=no,minimum-scale=1,maximum-scale=1"><title>index</title>
+    <style>
+        html {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column
+        }
+        body {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
+            margin: 0
+        }
+        canvas {
+            width: 594px;
+            height: 841px;
+            margin: auto;
+            display: block;
+            box-shadow: 0 2px 12px -2px rgba(0, 0, 0, .15)
+        }
+    </style>
+    <body>
+        <div><h2>Laurel Schwulst</h2><h3>New York, United States</h3><button id="newyork" onclick="whichLocation(this.id)">Show</button></div>
+        <div><h2>Yehwan Song</h2><h3>Seoul, Korea</h3><button id="seoul" onclick="whichLocation(this.id)">Show</button></div>
+        <div><h2>Braulio Amado</h2><h3>Lisbon, Portugal</h3><button id="lisbon" onclick="whichLocation(this.id)">Show</button></div>
+        <div><h2>Ronald Tau</h2><h3>Beijing, China</h3><button id="beijing" onclick="whichLocation(this.id)">Show</button></div>
+        <canvas id="canvas" width="594" height="841"></canvas>
+        <script src="index.js"></script>
+        
+    </body>
+</html>
