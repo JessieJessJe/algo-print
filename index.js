@@ -46,7 +46,6 @@ const settings = {
 	
 };
 
-let manager;
 
 let text = 'ANGLES';
 let fontSize = 200;
@@ -54,93 +53,86 @@ let fontFamily = 'HELVETICA';
 
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
-
-//setting up the canvas for print-ready in A1 size----
-const dpr = window.devicePixelRatio;
-
-const dpi = 300;
-let a1w = 23.39;
-let a1h = 33.11; //inches
-
-canvas.width = a1w * dpi * dpr;
-canvas.height = a1h * dpi * dpr;
-context.scale(dpr, dpr);
-
-//end of sizing------------------------------
+var width = canvas.width;
+var height = canvas.height;
 
 
-const width = canvas.width;
-const height = canvas.height;
+function posterSize(page){
 
 
-context.fillStyle = 'rgb(200, 0, 0)';
-context.fillRect(10, 10, 50, 50);
+    //setting up the canvas for print-ready in A1 size----
+    const dpr = window.devicePixelRatio;
+    const dpi = 300;
+    let w,h;
 
-const typeCanvas = document.createElement('canvas');
-const typeContext = typeCanvas.getContext('2d');
+    if (page =='a1'){
+            
+    w = 23.39;
+    h = 33.11; //inches
+    } else {
+            
+    w = 8.25;
+    h = 11.75; //a4
 
-const nameCanvas = document.createElement('canvas');
-const nameContext = nameCanvas.getContext('2d');
+    }
 
-document.getElementById('canvas').appendChild(typeCanvas); 
-document.getElementById('canvas').appendChild(nameCanvas); 
+    // const dpi = 300;
+    // let a1w = 23.39;
+    // let a1h = 33.11; //inches
+    //14034 19866
 
-async function searchMyLocation(){
-    let q = document.getElementById('mylocation').value;
-    myloc = q;
-    let query = 'https://nominatim.openstreetmap.org/search?q=' + q + '&format=geojson';
-
-    console.log('query', query)
-
-   fetch(query)
-    .then((resp) => resp.json())
-    .then((d) => { 
-        
-        mylat = map(d.features[0].geometry.coordinates[1],-90,90,-10,10);
-        mylng = map(d.features[0].geometry.coordinates[0],-180,180,-10,10);
-
-        console.log(d.features[0].geometry.coordinates)
-        console.log('updatelatlng', mylat, mylng)
-
-        context.clearRect(0, 0, width, height);
-        start();
-    })
     
+    // let a1w = 8.25;
+    // let a1h = 11.75; //inches
+
+
+    canvas.width = w * dpi * dpr;
+    canvas.height = h * dpi * dpr;
+    context.scale(dpr, dpr);
+
+    //end of sizing------------------------------
 
 }
 
+function resize(number, newPageSize){
+    if (newPageSize == 'a4'){
+        
+        return (number/23.39)*8.25;
 
-//switch between designers
-function whichLocation(id){
-
-    myLoc.forEach((d)=>{
-        if (d.id == id){
-            lat = d.lat;
-            lng = d.lng;
-            speaker = d.speaker;
-            city = d.city
-        }
-    })
-
-    document.querySelectorAll('.designerRadio').forEach( (s) => {
-        // s.setAttribute("checked", "false");
-        s.checked = false;
-    }) 
-    document.getElementById(id).checked = true;
-
-    context.clearRect(0, 0, width, height);
-    start();
-
+    } else {
+        return number
+    }
 }
 
-
-function sketch(){
+function sketch(pageSize){
 	
-	const cell = 160;
+    posterSize(pageSize);
 
-	const cols = Math.floor(width * 1.5 / cell);
-	const rows = Math.floor(height  * 1.5 / cell);
+
+    width = canvas.width;
+    height = canvas.height;
+
+
+        // context.fillStyle = 'rgb(200, 0, 0)';
+        // context.fillRect(10, 10, 50, 50);
+
+        const typeCanvas = document.createElement('canvas');
+        const typeContext = typeCanvas.getContext('2d');
+
+        const nameCanvas = document.createElement('canvas');
+        const nameContext = nameCanvas.getContext('2d');
+
+        document.getElementById('canvas').appendChild(typeCanvas); 
+        document.getElementById('canvas').appendChild(nameCanvas); 
+
+	const cell = resize(160,pageSize);
+
+	const cols = Math.floor(width * 1.5 / cell) 
+	const rows = Math.floor(height  * 1.5 / cell) 
 	const numCells = cols * rows;
+
+    console.log('a4', cols, rows, cell)
+    console.log('a1', Math.floor(14034 * 1.5 / 160),  Math.floor(19866  * 1.5 / 160) )
 
 	typeCanvas.width  = cols;
 	typeCanvas.height = rows;
@@ -176,9 +168,9 @@ function sketch(){
 		
 		typeContext.translate(tx, ty);
 		
-		typeContext.beginPath();
-		typeContext.rect(mx, my, mw, mh);
-		typeContext.stroke();
+		// typeContext.beginPath();
+		// typeContext.rect(mx, my, mw, mh);
+		// typeContext.stroke();
 
 		
 		typeContext.fillText(text, 0, 0);
@@ -187,12 +179,14 @@ function sketch(){
 		const typeData = typeContext.getImageData(0, 0, cols, rows).data;
 		
 		//----others
-    	let rr = Math.floor(height / 6);
-        let titleSize = 200
+    	let rr = resize(Math.floor(height / 6), pageSize);
+        let titleSize = resize(200,pageSize)
+
+        console.log(width, height)
 
         nameContext.save()
 
-            nameContext.translate(width/20, width/15);
+            nameContext.translate(resize(width/20,pageSize), resize(height/15,pageSize));
             // nameContext.translate(0, rr/2)
 
             nameContext.fillStyle = 'white'
@@ -204,15 +198,15 @@ function sketch(){
             nameContext.fillText(city, 0, rr);
 
             nameContext.font =`${titleSize * 1.5}px ZirkonBold`;
-            nameContext.fillText('ANGLES', 12 * (width/20), titleSize*1.2 + rr);
+            nameContext.fillText('ANGLES', 12 * (width/20/resizeDouble(pageSize)), titleSize*1.2 + rr);
 
             nameContext.font =`${titleSize}px ZirkonLight`;
             nameContext.fillText('Artist, Designer, Educator', 0, titleSize*1.2);
             nameContext.fillText('October 12 at Noon', 0, titleSize*1.2 + rr);
 
             nameContext.font =`${titleSize*1.5}px ZirkonLight`;
-            nameContext.fillText('Perspectives', 12 * (width/20), 2*titleSize*1.5 + rr);
-            nameContext.fillText('in Design', 12 * (width/20), 2*titleSize*1.5+titleSize*1.6 + rr);
+            nameContext.fillText('Perspectives', 12 * (width/20/resizeDouble(pageSize)), 2*titleSize*1.5 + rr);
+            nameContext.fillText('in Design', 12 * (width/20/resizeDouble(pageSize)), 2*titleSize*1.5+titleSize*1.6 + rr);
 
             
 
@@ -230,17 +224,21 @@ function sketch(){
 		context.textBaseline = 'middle';
 		context.textAlign = 'center';
 
-		context.drawImage(typeCanvas, 0, 0);
+		// context.drawImage(typeCanvas, 0, 0);
 
 		context.drawImage(nameCanvas, 0, 0);
 
-		drawAngles(numCells, cols, typeData, cell, context, 1000, -1800);
+		drawAngles(numCells, cols, typeData, cell, context, resize(1000,pageSize), resize(-1800,pageSize), pageSize);
 
-		drawAngles(numCells, cols, typeData, cell, context, -4000, 700);
+		drawAngles(numCells, cols, typeData, cell, context, resize(-4000, pageSize), resize(700,pageSize), pageSize)
 
-		drawStars(100, context, width, height)
+        // drawAngles(numCells, cols, typeData, cell, context, 0, 0, pageSize);
 
-		drawRect(context, width, height, 40)
+		// // drawAngles(numCells, cols, typeData, cell, context, resize(-4000, pageSize), resize(700,pageSize), pageSize)
+
+		drawStars(resize(100, pageSize), context, width, height, pageSize)
+
+		drawRect(context, width, height, resize(40,pageSize), pageSize)
 
         drawSmallCanvas(mylat,mylng,lat,lng, myloc, city);
 
@@ -254,7 +252,7 @@ function drawSmallCanvas(mylat,mylng,lat,lng, myloc, city){
     const smallcanvas = document.getElementById('smallcanvas');
     const smallcontext = smallcanvas.getContext('2d');
 
-    smallcontext.scale(dpr, dpr)
+    // smallcontext.scale(dpr, dpr)
 
     smallcontext.fillStyle = "#d3d3d3";
     smallcontext.fillRect(0, 0, smallcanvas.width, smallcanvas.height);
@@ -325,21 +323,28 @@ function drawSmallCanvas(mylat,mylng,lat,lng, myloc, city){
 
 }
 
-function drawRect(context, width, height,scale){
+function resizeDouble(newPageSize){
+    if (newPageSize == 'a4'){
+        return 2
+    }else{
+        return 1
+    }
+}
+function drawRect(context, width, height, scale, pageSize){
 
-	const rows = Math.floor(height / 6);
+	const rows = Math.floor(height / 6) / resizeDouble(pageSize);
 
 	for (let j = 0; j < 6; j++) {
 
 		context.save();
 
-		context.translate(width/6, j*rows - rows);
+		context.translate(width/6/resizeDouble(pageSize), j*rows - rows);
 		context.translate(rows/3, rows/2)
 		// context.translate(mylat,mylng);
 
 		context.beginPath(); 
 		context.strokeStyle = 'white';
-		context.lineWidth = 200;
+		context.lineWidth = resize(200, pageSize);
 
 		context.moveTo(mylng*scale, rows - mylat*scale);
 		// context.moveTo(0,0);
@@ -353,10 +358,10 @@ function drawRect(context, width, height,scale){
 
 }
 
-function drawStars(cell, context, width, height){
+function drawStars(cell, context, width, height, pageSize){
 
-	const cols = Math.floor(width  / cell);
-	const rows = Math.floor(height / cell);
+	const cols = Math.floor(width  / cell) ;
+	const rows = Math.floor(height / cell) ;
 
 	for (let i = 0; i < cols; i++) {
 		for (let j = 0; j < rows; j++) {
@@ -364,7 +369,7 @@ function drawStars(cell, context, width, height){
 		context.save();
         
         if (getRandom(0.6)){
-            const size = randomSize(i * cell,j * cell);
+            const size = randomSize(i * cell, j * cell, pageSize);
             context.fillRect(i * cell, j * cell, size, size);	
         }
 
@@ -376,7 +381,16 @@ function drawStars(cell, context, width, height){
 }
 
 
-function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0){
+function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0, pageSize){
+
+    // cell = resize(cell, pageSize);
+
+    cell = cell / resizeDouble(pageSize);
+
+    // cols = Math.floor(width * 1.5 / cell) 
+	// let rows = Math.floor(height  * 1.5 / cell) 
+	// numCells = cols * rows;
+
 
 	for (let i = 0; i < numCells; i++) {
 		const col = i % cols;
@@ -395,19 +409,24 @@ function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0){
 
 		context.fillStyle = 'white';
 
+        // context.fillRect(x, y,20,20)
+
 		context.save();
 		context.translate(x+myX, y+myY);
 		context.translate(cell * 0.5, cell * 0.5);
 
-		let scale2 = Math.floor(Math.random() * 20)
+		let scale2 = resize(Math.floor(Math.random() * 20),pageSize)
 
 		if (isrow ){
 			context.beginPath(); 
 
 			context.strokeStyle = 'white';
-			context.lineWidth = 5;
-			context.moveTo(200,0);
-			context.lineTo(-50,0);
+			context.lineWidth = resize(5,pageSize);
+			// context.moveTo(resize(200,pageSize),0);
+			// context.lineTo(resize(-50,pageSize),0);
+
+            context.moveTo(resize(200,pageSize)/resizeDouble(pageSize),0);
+			context.lineTo(resize(-50,pageSize)/resizeDouble(pageSize),0);
 			// context.arc(0, 0, 20, 10, Math.PI/4);
 			context.stroke();
 		}
@@ -416,9 +435,9 @@ function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0){
 				context.beginPath(); 
 
 				context.strokeStyle = 'white';
-				context.lineWidth = 5;
-				context.moveTo(0,-250);
-				context.lineTo(0,250);
+				context.lineWidth = resize(5,pageSize);;
+				context.moveTo(0,resize(-250,pageSize)/resizeDouble(pageSize));
+				context.lineTo(0,resize(250,pageSize)/resizeDouble(pageSize));
 				
 				context.stroke();
 			}
@@ -427,16 +446,18 @@ function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0){
 				context.beginPath(); 
 
 				context.strokeStyle = 'white';
-				context.lineWidth = 25;
+				context.lineWidth = resize(25,pageSize);
 
 				// context.translate(mylat,mylng);
                 // context.moveTo(0,0);
 
-				context.moveTo(mylng*scale2, cell + cell * 0.5 - mylat*scale2);
+				context.moveTo(mylng*scale2/resizeDouble(pageSize), (cell + cell * 0.5 - mylat*scale2)/resizeDouble(pageSize));
 			
-				context.lineTo(lng*scale2, cell + cell * 0.5- lat*scale2);
+				context.lineTo(lng*scale2/resizeDouble(pageSize), (cell + cell * 0.5- lat*scale2)/resizeDouble(pageSize));
 				
 				context.stroke();
+
+                // console.log('draw',  x + myX+ mylng*scale2, y+ myY + cell + cell * 0.5 - mylat*scale2)
 
 			}
 			
@@ -458,12 +479,13 @@ const randomPick = () => {
     return getRandom(0.75);
 }
 
-const randomSize = (x,y)=>{
+const randomSize = (x,y, pageSize)=>{
 
 	// const n = random.noise3D(x, y, 0.01, 1);
     const n = Math.random();
 
-    const scale = map(n, 0, 1, 1, 10);
+    const scale = map(n, 0, 1, resize(1, pageSize), resize(10,pageSize));
+    // const scale = map(n, 0, 1, 1, 10);
    
 	return scale
 	
@@ -503,7 +525,7 @@ const isRowRow = (v) => {
 // document.addEventListener('keyup', onKeyUp);
 
 
-async function start(){
+async function start(pageSize){
 
 	ZirkonBold.load().then(function(font){
 		document.fonts.add(font);
@@ -511,7 +533,7 @@ async function start(){
         ZirkonLight.load().then(function(font){
             document.fonts.add(font);
 
-            sketch();
+            sketch(pageSize);
 
         })
 
@@ -523,10 +545,13 @@ async function start(){
 };
 
 
-start();
+start('a4');
 
 
-function download() {
+async function download() {
+
+    // await start('a1');
+
     const downloadUrl = canvas.toDataURL();
     const a = document.createElement("a");
     a.href = downloadUrl;
@@ -534,7 +559,50 @@ function download() {
     a.click();
   }
 
-// document.getElementById('seoul').onclick = whichLocation(this.id);
-// document.getElementById('beijing').onclick = whichLocation(this.id);
-// document.getElementById('newyork').onclick = whichLocation(this.id);
-// document.getElementById('lisbon').onclick = whichLocation(this.id);
+
+  async function searchMyLocation(){
+    let q = document.getElementById('mylocation').value;
+    myloc = q;
+    let query = 'https://nominatim.openstreetmap.org/search?q=' + q + '&format=geojson';
+
+   fetch(query)
+    .then((resp) => resp.json())
+    .then((d) => { 
+        
+        mylat = map(d.features[0].geometry.coordinates[1],-90,90,-10,10);
+        mylng = map(d.features[0].geometry.coordinates[0],-180,180,-10,10);
+
+        console.log(d.features[0].geometry.coordinates)
+        console.log('updatelatlng', mylat, mylng)
+
+        context.clearRect(0, 0, width, height);
+        start('a4');
+    })
+    
+
+}
+
+
+//switch between designers
+function whichLocation(id){
+
+    myLoc.forEach((d)=>{
+        if (d.id == id){
+            lat = d.lat;
+            lng = d.lng;
+            speaker = d.speaker;
+            city = d.city
+        }
+    })
+
+    document.querySelectorAll('.designerRadio').forEach( (s) => {
+        // s.setAttribute("checked", "false");
+        s.checked = false;
+    }) 
+    document.getElementById(id).checked = true;
+
+    context.clearRect(0, 0, width, height);
+    start('a4');
+
+}
+
