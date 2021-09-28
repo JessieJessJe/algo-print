@@ -85,20 +85,6 @@ const nameContext = nameCanvas.getContext('2d');
 document.getElementById('canvas').appendChild(typeCanvas); 
 document.getElementById('canvas').appendChild(nameCanvas); 
 
-//once customized location submitted
-// function setMyLocation(){
-//     let mylat0 = parseFloat(document.getElementById('mylat').value)
-//     let mylng0 = parseFloat(document.getElementById('mylng').value)
-
-//     mylat = map(mylat0,-180,180,-10,10);
-//     mylng = map(mylng0,-180,180,-10,10);
-
-//     context.clearRect(0, 0, width, height);
-
-//     console.log('submit',mylat)
-//     start()
-// }
-
 async function searchMyLocation(){
     let q = document.getElementById('mylocation').value;
     myloc = q;
@@ -273,8 +259,6 @@ function drawSmallCanvas(mylat,mylng,lat,lng, myloc, city){
     smallcontext.fillStyle = "#d3d3d3";
     smallcontext.fillRect(0, 0, smallcanvas.width, smallcanvas.height);
 
-    
-
     mylat = map(mylat,-10,10, 0, smallcanvas.height);
     mylng = map(mylng,-10,10, 0, smallcanvas.width);
 
@@ -315,8 +299,6 @@ function drawSmallCanvas(mylat,mylng,lat,lng, myloc, city){
         }
 
     }
-
-    console.log(lngunit, latunit);
 
     smallcontext.save()
     // smallcontext.translate(smallcanvas.width/2, 0 )
