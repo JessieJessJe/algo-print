@@ -11,30 +11,34 @@ let myLoc = [{
     'city': 'Seoul, Korea',
     'lat': map(37.5,-90,90,-10,10),
     'lng': map(127,-180,180,-10,10),
-    'speaker':'Yehwan Song'
+    'speaker':'Yehwan Song',
+    'intro':`Anti-user-friendly/indieweb`
 },{
     'id': 'lisbon',
     'city': 'Lisbon, Portugal',
     'lat': map(37.8723,-90,90,-10,10),
     'lng': map(-9.14,-180,180,-10,10),
-    'speaker':'Braulio Amado'
+    'speaker':'Braulio Amado',
+    'intro':'BAD STUDIO'
 },{
     'id': 'newyork',
     'city': 'New York, United States',
     'lat': map(40.7,-90,90,-10,10),
     'lng': map(-74,-180,180,-10,10),
-    'speaker':'Laurel Schwulst'
+    'speaker':'Laurel Schwulst',
+    'intro':'Fruitful School'
 },{
     'id': 'beijing',
     'city': 'Beijing, China',
     'lat': map(39.9,-90,90,-10,10),
     'lng': map(116.4,-180,180,-10,10),
-    'speaker':'Ronald Tau'
+    'speaker':'Ronald Tau',
+    'intro':'meat.studio'
 }]
 
 
 //setting default poster to Laurel's
-let lat=map(40.7,-90,90,-10,10), lng=map(-74,-180,180,-10,10), speaker='Laurel Schwulst', city='New York, United States';
+let lat=map(40.7,-90,90,-10,10), lng=map(-74,-180,180,-10,10), speaker='Laurel Schwulst', city='New York, United States', intro='Fruitful School';
 document.getElementById('newyork').checked = true;
 
 
@@ -211,7 +215,7 @@ function sketch(pageSize){
             nameContext.fillText('ANGLES', 12 * (width/20), titleSize*1.2 + rr);
 
             nameContext.font =`${titleSize}px ZirkonLight`;
-            nameContext.fillText('Artist, Designer, Educator', 0, titleSize*1.2);
+            nameContext.fillText(intro, 0, titleSize*1.2);
             nameContext.fillText('October 12 at Noon', 0, titleSize*1.2 + rr);
 
             nameContext.font =`${titleSize*1.5}px ZirkonLight`;
@@ -576,7 +580,8 @@ function whichLocation(id){
             lat = d.lat;
             lng = d.lng;
             speaker = d.speaker;
-            city = d.city
+            city = d.city,
+            intro = d.intro
         }
     })
 
