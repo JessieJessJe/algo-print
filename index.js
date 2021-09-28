@@ -1,57 +1,40 @@
-// const canvasSketch = require('canvas-sketch');
-// const random = require('canvas-sketch-util/random');
-// const math = require('canvas-sketch-util/math');
 
 const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2;
+
+var mylat = map(-89,-90,90,-10,10);
+var mylng = map(0,-180,180,-10,10);
+var myloc = "South Pole"
 
 let myLoc = [{
     'id': 'seoul',
     'city': 'Seoul, Korea',
-    'lat': map(37.5,-180,180,-10,10),
+    'lat': map(37.5,-90,90,-10,10),
     'lng': map(127,-180,180,-10,10),
     'speaker':'Yehwan Song'
 },{
     'id': 'lisbon',
     'city': 'Lisbon, Portugal',
-    'lat': map(378.723,-180,180,-10,10),
+    'lat': map(37.8723,-90,90,-10,10),
     'lng': map(-9.14,-180,180,-10,10),
     'speaker':'Braulio Amado'
 },{
     'id': 'newyork',
     'city': 'New York, United States',
-    'lat': map(40.7,-180,180,-10,10),
+    'lat': map(40.7,-90,90,-10,10),
     'lng': map(-74,-180,180,-10,10),
     'speaker':'Laurel Schwulst'
 },{
     'id': 'beijing',
     'city': 'Beijing, China',
-    'lat': map(39.9,-180,180,-10,10),
+    'lat': map(39.9,-90,90,-10,10),
     'lng': map(116.4,-180,180,-10,10),
     'speaker':'Ronald Tau'
 }]
 
-//seoul
-// const lat = map(37.5,-180,180,-10,10);
-// const lng = map(127,-180,180,-10,10);
 
-
-//lisbon
-// const lat = math.mapRange(378.723,-180,180,-10,10);
-// const lng = math.mapRange(-9.14,-180,180,-10,10);
-
-//nyc
-// const lat = math.mapRange(40.7,-180,180,-10,10);
-// const lng = math.mapRange(-74,-180,180,-10,10);
-
-//beijing
-// const lat = math.mapRange(39.9,-180,180,-10,10);
-// const lng = math.mapRange(116.4,-180,180,-10,10);
-
-let mylat = map(40.7,-180,180,-10,10),
-    mylng = map(-74,-180,180,-10,10);
-
-let lat=map(40.7,-180,180,-10,10), lng=map(-74,-180,180,-10,10), speaker='Laurel Schwulst', city='New York, United States';
-
+//setting default poster to Laurel's
+let lat=map(40.7,-90,90,-10,10), lng=map(-74,-180,180,-10,10), speaker='Laurel Schwulst', city='New York, United States';
+document.getElementById('newyork').checked = true;
 
 
 var ZirkonBold = new FontFace('ZirkonBold', 'url(assets/GT-Zirkon-Bold-Trial.otf)');
@@ -89,7 +72,6 @@ context.scale(dpr, dpr);
 const width = canvas.width;
 const height = canvas.height;
 
-console.log(width, height)
 
 context.fillStyle = 'rgb(200, 0, 0)';
 context.fillRect(10, 10, 50, 50);
@@ -104,20 +86,45 @@ document.getElementById('canvas').appendChild(typeCanvas);
 document.getElementById('canvas').appendChild(nameCanvas); 
 
 //once customized location submitted
-function setMyLocation(){
-    let mylat0 = parseFloat(document.getElementById('mylat').value)
-    let mylng0 = parseFloat(document.getElementById('mylng').value)
+// function setMyLocation(){
+//     let mylat0 = parseFloat(document.getElementById('mylat').value)
+//     let mylng0 = parseFloat(document.getElementById('mylng').value)
 
-    mylat = map(mylat0,-180,180,-10,10);
-    mylng = map(mylng0,-180,180,-10,10);
+//     mylat = map(mylat0,-180,180,-10,10);
+//     mylng = map(mylng0,-180,180,-10,10);
 
-    context.clearRect(0, 0, width, height);
+//     context.clearRect(0, 0, width, height);
 
-    console.log('submit',mylat)
-    start()
+//     console.log('submit',mylat)
+//     start()
+// }
+
+async function searchMyLocation(){
+    let q = document.getElementById('mylocation').value;
+    myloc = q;
+    let query = 'https://nominatim.openstreetmap.org/search?q=' + q + '&format=geojson';
+
+    console.log('query', query)
+
+   fetch(query)
+    .then((resp) => resp.json())
+    .then((d) => { 
+        
+        mylat = map(d.features[0].geometry.coordinates[1],-90,90,-10,10);
+        mylng = map(d.features[0].geometry.coordinates[0],-180,180,-10,10);
+
+        console.log(d.features[0].geometry.coordinates)
+        console.log('updatelatlng', mylat, mylng)
+
+        context.clearRect(0, 0, width, height);
+        start();
+    })
+    
+
 }
 
-//once chose another designer
+
+//switch between designers
 function whichLocation(id){
 
     myLoc.forEach((d)=>{
@@ -128,6 +135,12 @@ function whichLocation(id){
             city = d.city
         }
     })
+
+    document.querySelectorAll('.designerRadio').forEach( (s) => {
+        // s.setAttribute("checked", "false");
+        s.checked = false;
+    }) 
+    document.getElementById(id).checked = true;
 
     context.clearRect(0, 0, width, height);
     start();
@@ -241,27 +254,94 @@ function sketch(){
 
 		drawStars(100, context, width, height)
 
-		drawRect(context, width, height, 50)
+		drawRect(context, width, height, 40)
 
-		//--creating name grid
-
-
-		// nameCanvas.width  = 1000;
-		// nameCanvas.height = 1000;
-
-		// nameContext.fillStyle = 'yellow'
-		// nameContext.font ='1000px Helvetica';
-		// nameContext.textBaseline = 'middle';
-		// nameContext.textAlign = 'center';
-		// nameContext.fillText('Laurel Schwult', 100, 100);
-
-		const nameData = nameContext.getImageData(0, 0, 1000, 1000).data;
-		console.log(nameData)
-
+        drawSmallCanvas(mylat,mylng,lat,lng, myloc, city);
 
 		//end of name grid
 	
 };
+
+function drawSmallCanvas(mylat,mylng,lat,lng, myloc, city){
+
+
+    const smallcanvas = document.getElementById('smallcanvas');
+    const smallcontext = smallcanvas.getContext('2d');
+
+    smallcontext.scale(dpr, dpr)
+
+    smallcontext.fillStyle = "#d3d3d3";
+    smallcontext.fillRect(0, 0, smallcanvas.width, smallcanvas.height);
+
+    
+
+    mylat = map(mylat,-10,10, 0, smallcanvas.height);
+    mylng = map(mylng,-10,10, 0, smallcanvas.width);
+
+    lat = map(lat,-10,10, 0, smallcanvas.height);
+    lng = map(lng,-10,10, 0, smallcanvas.width);
+
+    city = city.split(',')[0].trim();
+
+    let latunit = smallcanvas.height / 180;
+    for (let j=0; j<180; j++){
+
+        if (j%10 == 1){
+
+            smallcontext.strokeStyle = 'black';
+            smallcontext.lineWidth = 0.1;
+            smallcontext.beginPath();
+            smallcontext.moveTo(0, j*latunit);
+            smallcontext.lineTo(smallcanvas.width,j*latunit)
+            smallcontext.stroke();
+        }
+
+    }
+
+    let lngunit = smallcanvas.width / 360;
+    for(let i=0; i<360; i++){
+
+        if (i%10 == 1){
+
+            smallcontext.strokeStyle = 'black';
+            smallcontext.lineWidth = 0.1;
+            smallcontext.beginPath();
+            smallcontext.moveTo(i*lngunit, 0)
+    
+            // smallcontext.moveTo(0, 0)
+            smallcontext.lineTo(i*lngunit, smallcanvas.height)
+            smallcontext.stroke();
+
+        }
+
+    }
+
+    console.log(lngunit, latunit);
+
+    smallcontext.save()
+    // smallcontext.translate(smallcanvas.width/2, 0 )
+
+    smallcontext.beginPath();
+    smallcontext.strokeStyle = 'white';
+    smallcontext.lineWidth = 30;
+    smallcontext.moveTo(mylng, smallcanvas.height - mylat);
+    smallcontext.lineTo(lng, smallcanvas.height - lat);
+    smallcontext.stroke();
+
+    smallcontext.fillStyle = 'black';
+    smallcontext.font =`10px ZirkonLight`;
+    smallcontext.textAlign = "center";
+    smallcontext.fillText(myloc, mylng, smallcanvas.height - mylat);
+    smallcontext.fillRect(mylng, smallcanvas.height - mylat, 5,5)
+    smallcontext.fillRect(lng, smallcanvas.height - lat, 5,5)
+    smallcontext.fillText(city, lng, smallcanvas.height - lat);
+
+    smallcontext.restore();
+
+    // nameContext.font =`${titleSize}px ZirkonBold`;
+    // nameContext.fillText(speaker, 0, 0);
+
+}
 
 function drawRect(context, width, height,scale){
 
@@ -271,17 +351,17 @@ function drawRect(context, width, height,scale){
 
 		context.save();
 
-		context.translate(width/6, j*rows);
+		context.translate(width/6, j*rows - rows);
 		context.translate(rows/3, rows/2)
-		context.translate(mylat,mylng);
+		// context.translate(mylat,mylng);
 
 		context.beginPath(); 
 		context.strokeStyle = 'white';
 		context.lineWidth = 200;
 
-		// context.moveTo(-mylat*scale,-mylng*scale);
-		context.moveTo(0,0);
-		context.lineTo(lat*scale,lng*scale);
+		context.moveTo(mylng*scale, rows - mylat*scale);
+		// context.moveTo(0,0);
+		context.lineTo(lng*scale, rows - lat*scale);
 		
 		context.stroke();
 
@@ -367,11 +447,12 @@ function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0){
 				context.strokeStyle = 'white';
 				context.lineWidth = 25;
 
-				context.translate(mylat,mylng);
+				// context.translate(mylat,mylng);
+                // context.moveTo(0,0);
 
-				// context.moveTo(-mylat*scale2,-mylng*scale2);
-				context.moveTo(0,0);
-				context.lineTo(lat*scale2,lng*scale2);
+				context.moveTo(mylng*scale2, cell + cell * 0.5 - mylat*scale2);
+			
+				context.lineTo(lng*scale2, cell + cell * 0.5- lat*scale2);
 				
 				context.stroke();
 
