@@ -1,3 +1,4 @@
+var myPageSize = 'a1';
 
 const map = (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2;
 
@@ -61,7 +62,9 @@ function posterSize(page){
 
 
     //setting up the canvas for print-ready in A1 size----
-    const dpr = window.devicePixelRatio;
+    // const dpr = window.devicePixelRatio;
+
+    const dpr = 1;
     const dpi = 300;
     let w,h;
 
@@ -92,6 +95,15 @@ function posterSize(page){
 
     //end of sizing------------------------------
 
+}
+
+
+function resizeDouble(newPageSize){
+    if (newPageSize == 'a4'){
+        return 2
+    }else{
+        return 1
+    }
 }
 
 function resize(number, newPageSize){
@@ -125,7 +137,7 @@ function sketch(pageSize){
         document.getElementById('canvas').appendChild(typeCanvas); 
         document.getElementById('canvas').appendChild(nameCanvas); 
 
-	const cell = resize(160,pageSize);
+	const cell = resize(160,pageSize) 
 
 	const cols = Math.floor(width * 1.5 / cell) 
 	const rows = Math.floor(height  * 1.5 / cell) 
@@ -179,10 +191,8 @@ function sketch(pageSize){
 		const typeData = typeContext.getImageData(0, 0, cols, rows).data;
 		
 		//----others
-    	let rr = resize(Math.floor(height / 6), pageSize);
+    	let rr = Math.floor(height / 6);
         let titleSize = resize(200,pageSize)
-
-        console.log(width, height)
 
         nameContext.save()
 
@@ -198,15 +208,15 @@ function sketch(pageSize){
             nameContext.fillText(city, 0, rr);
 
             nameContext.font =`${titleSize * 1.5}px ZirkonBold`;
-            nameContext.fillText('ANGLES', 12 * (width/20/resizeDouble(pageSize)), titleSize*1.2 + rr);
+            nameContext.fillText('ANGLES', 12 * (width/20), titleSize*1.2 + rr);
 
             nameContext.font =`${titleSize}px ZirkonLight`;
             nameContext.fillText('Artist, Designer, Educator', 0, titleSize*1.2);
             nameContext.fillText('October 12 at Noon', 0, titleSize*1.2 + rr);
 
             nameContext.font =`${titleSize*1.5}px ZirkonLight`;
-            nameContext.fillText('Perspectives', 12 * (width/20/resizeDouble(pageSize)), 2*titleSize*1.5 + rr);
-            nameContext.fillText('in Design', 12 * (width/20/resizeDouble(pageSize)), 2*titleSize*1.5+titleSize*1.6 + rr);
+            nameContext.fillText('Perspectives', 12 * (width/20), 2*titleSize*1.5 + rr);
+            nameContext.fillText('in Design', 12 * (width/20), 2*titleSize*1.5+titleSize*1.6 + rr);
 
             
 
@@ -231,10 +241,6 @@ function sketch(pageSize){
 		drawAngles(numCells, cols, typeData, cell, context, resize(1000,pageSize), resize(-1800,pageSize), pageSize);
 
 		drawAngles(numCells, cols, typeData, cell, context, resize(-4000, pageSize), resize(700,pageSize), pageSize)
-
-        // drawAngles(numCells, cols, typeData, cell, context, 0, 0, pageSize);
-
-		// // drawAngles(numCells, cols, typeData, cell, context, resize(-4000, pageSize), resize(700,pageSize), pageSize)
 
 		drawStars(resize(100, pageSize), context, width, height, pageSize)
 
@@ -323,22 +329,15 @@ function drawSmallCanvas(mylat,mylng,lat,lng, myloc, city){
 
 }
 
-function resizeDouble(newPageSize){
-    if (newPageSize == 'a4'){
-        return 2
-    }else{
-        return 1
-    }
-}
 function drawRect(context, width, height, scale, pageSize){
 
-	const rows = Math.floor(height / 6) / resizeDouble(pageSize);
+	const rows = Math.floor(height / 6);
 
 	for (let j = 0; j < 6; j++) {
 
 		context.save();
 
-		context.translate(width/6/resizeDouble(pageSize), j*rows - rows);
+		context.translate(width/6, j*rows - rows);
 		context.translate(rows/3, rows/2)
 		// context.translate(mylat,mylng);
 
@@ -383,14 +382,6 @@ function drawStars(cell, context, width, height, pageSize){
 
 function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0, pageSize){
 
-    // cell = resize(cell, pageSize);
-
-    cell = cell / resizeDouble(pageSize);
-
-    // cols = Math.floor(width * 1.5 / cell) 
-	// let rows = Math.floor(height  * 1.5 / cell) 
-	// numCells = cols * rows;
-
 
 	for (let i = 0; i < numCells; i++) {
 		const col = i % cols;
@@ -425,8 +416,8 @@ function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0, p
 			// context.moveTo(resize(200,pageSize),0);
 			// context.lineTo(resize(-50,pageSize),0);
 
-            context.moveTo(resize(200,pageSize)/resizeDouble(pageSize),0);
-			context.lineTo(resize(-50,pageSize)/resizeDouble(pageSize),0);
+            context.moveTo(resize(100,pageSize),0);
+			context.lineTo(resize(-50,pageSize),0);
 			// context.arc(0, 0, 20, 10, Math.PI/4);
 			context.stroke();
 		}
@@ -436,8 +427,8 @@ function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0, p
 
 				context.strokeStyle = 'white';
 				context.lineWidth = resize(5,pageSize);;
-				context.moveTo(0,resize(-250,pageSize)/resizeDouble(pageSize));
-				context.lineTo(0,resize(250,pageSize)/resizeDouble(pageSize));
+				context.moveTo(0,resize(-100,pageSize));
+				context.lineTo(0,resize(150,pageSize));
 				
 				context.stroke();
 			}
@@ -451,9 +442,9 @@ function drawAngles(numCells, cols, typeData, cell, context, myX = 0, myY = 0, p
 				// context.translate(mylat,mylng);
                 // context.moveTo(0,0);
 
-				context.moveTo(mylng*scale2/resizeDouble(pageSize), (cell + cell * 0.5 - mylat*scale2)/resizeDouble(pageSize));
+				context.moveTo(mylng*scale2, (cell + cell * 0.5 - mylat*scale2));
 			
-				context.lineTo(lng*scale2/resizeDouble(pageSize), (cell + cell * 0.5- lat*scale2)/resizeDouble(pageSize));
+				context.lineTo(lng*scale2, (cell + cell * 0.5- lat*scale2));
 				
 				context.stroke();
 
@@ -516,14 +507,6 @@ const isRowRow = (v) => {
 
 };
 
- 
-// const onKeyUp = (e) => {
-// 	text = e.key.toUpperCase();
-// 	manager.render();
-// };
-
-// document.addEventListener('keyup', onKeyUp);
-
 
 async function start(pageSize){
 
@@ -537,26 +520,28 @@ async function start(pageSize){
 
         })
 
-	})
-
-
-	
+	})	
 	
 };
 
 
-start('a4');
+start('a1');
 
 
-async function download() {
-
-    // await start('a1');
+function download() {
 
     const downloadUrl = canvas.toDataURL();
     const a = document.createElement("a");
     a.href = downloadUrl;
-    a.setAttribute("download", `Angles_EventPoster_${speaker}`);
+    a.setAttribute("download", `Angles_Poster_${myPageSize}_${speaker}`);
     a.click();
+  }
+
+function generate(pageSize) {
+
+    myPageSize = pageSize;
+    start(pageSize)
+   
   }
 
 
@@ -576,7 +561,7 @@ async function download() {
         console.log('updatelatlng', mylat, mylng)
 
         context.clearRect(0, 0, width, height);
-        start('a4');
+        start('a1');
     })
     
 
@@ -596,13 +581,13 @@ function whichLocation(id){
     })
 
     document.querySelectorAll('.designerRadio').forEach( (s) => {
-        // s.setAttribute("checked", "false");
+     
         s.checked = false;
     }) 
     document.getElementById(id).checked = true;
 
     context.clearRect(0, 0, width, height);
-    start('a4');
+    start('a1');
 
 }
 
