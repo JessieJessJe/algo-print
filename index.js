@@ -12,7 +12,7 @@ let myLoc = [{
     'lat': map(37.5,-90,90,-10,10),
     'lng': map(127,-180,180,-10,10),
     'speaker':'Yehwan Song',
-    'intro':`Anti-user-friendly/indieweb`
+    'intro':`Anti-user-friendlygt/indieweb`
 },{
     'id': 'lisbon',
     'city': 'Lisbon, Portugal',
@@ -535,10 +535,17 @@ start('a1');
 function download() {
 
     const downloadUrl = canvas.toDataURL();
-    const a = document.createElement("a");
-    a.href = downloadUrl;
-    a.setAttribute("download", `Angles_Poster_${myPageSize}_${speaker}`);
-    a.click();
+
+    var imgData = canvas.toDataURL("image/jpeg", 1.0);
+    var pdf = new jsPDF();
+
+    pdf.addImage(imgData, 'JPEG', 0, 0);
+    pdf.save(`Angles_Poster_${myPageSize}_${speaker}.pdf`);
+
+    // const a = document.createElement("a");
+    // a.href = downloadUrl;
+    // a.setAttribute("download", `Angles_Poster_${myPageSize}_${speaker}`);
+    // a.click();
   }
 
 function generate(pageSize) {
